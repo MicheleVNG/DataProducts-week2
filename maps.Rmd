@@ -1,0 +1,45 @@
+---
+title: "My first Leaflet maps"
+author: "by MicheleVNG"
+date: "Saturday, 18 March 2017"
+output:
+  html_document:
+    keep_md: TRUE
+---
+
+This is my personal version of the week 2 assignment for the [Developing Data 
+Products](https://www.coursera.org/learn/data-products/) course on Coursera.
+
+There you go:
+
+```{r, message=FALSE, warning=FALSE}
+library(leaflet)
+library(readr)
+library(dplyr)
+
+cities <- read_csv("comuni.csv") %>% 
+	arrange(desc(`POP-Totale`)) %>% 
+	select(Comune, Latitudine, Longitudine, `POP-Totale`) %>% 
+	rename(lat = Latitudine,
+	       lng = Longitudine,
+	       pop = `POP-Totale`)
+```
+
+### Top 20 italian cities by population
+
+```{r top 20, message=FALSE}
+cities[1:20, ] %>% 
+	leaflet() %>% 
+	addTiles() %>% 
+	addMarkers()
+```
+
+### Top 30 italian cities by population (with radius)
+
+```{r top 30 with radius, message=FALSE}
+cities[1:30, ] %>% 
+	leaflet() %>% 
+	addTiles() %>% 
+	addCircles(weight = 1, radius = sqrt(cities[1:30,]$pop) * 60,
+		   popup = paste("Population:", cities[1:30,]$pop))
+```
